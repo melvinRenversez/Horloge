@@ -1,36 +1,54 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compte à rebours</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: 'Poppins', sans-serif;
             background-color: #282c34;
             color: white;
-            text-align: center;
+            height: 100dvh;
+            overflow: hidden;
+            position: relative;
         }
+
         #countdown {
-            font-size: 2rem;
+            font-size: 3rem;
+            font-weight: 800;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: color 0.5s ease-in-out;
+            text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
+
 <body>
     <div id="countdown">Chargement...</div>
 
     <script>
+        let hue = 0;
+
         function updateCountdown() {
             const now = new Date();
             const target = new Date("2025-04-04T17:00:00");
 
             const diff = target - now;
             if (diff <= 0) {
-                document.getElementById("countdown").innerText = "Temps écoulé";
+                $("#countdown").text("Temps écoulé");
                 return;
             }
 
@@ -39,12 +57,34 @@
             const minutes = Math.floor((diff / (1000 * 60)) % 60);
             const seconds = Math.floor((diff / 1000) % 60);
 
-            document.getElementById("countdown").innerText = 
-                `${days}j ${hours}h ${minutes}m ${seconds}s restants`;
+            $("#countdown").text(`${days}j ${hours}h ${minutes}m ${seconds}s`);
+
+            moveCountdown();
         }
 
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+        function moveCountdown() {
+            const $countdown = $("#countdown");
+            const maxX = $(window).width() - $countdown.outerWidth();
+            const maxY = $(window).height() - $countdown.outerHeight();
+
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+
+            hue = (hue + 10) % 360;
+
+            $countdown.animate({
+                left: randomX,
+                top: randomY
+            }, 500, function () {
+                $countdown.css("color", `hsl(${hue}, 100%, 60%)`);
+            });
+        }
+
+        $(document).ready(function () {
+            setInterval(updateCountdown, 1000);
+            updateCountdown();
+        });
     </script>
 </body>
+
 </html>
